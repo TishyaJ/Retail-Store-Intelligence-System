@@ -1,0 +1,128 @@
+{
+  "stores": {
+    "ST1076": {
+      "name": "Purplle Store 1 — Mumbai",
+      "floor_width_mm": 14000,
+      "floor_depth_mm": 4020,
+      "coordinate_system": "physical_mm",
+      "coordinate_note": "Origin (0,0) is bottom-left (entry side). X increases rightward, Y increases upward. Derived from layout PNG architectural measurements.",
+      "zones": [
+        {
+          "zone_id": "PURPLLE_MUM_1076_Z01",
+          "zone_name": "Left Shelf",
+          "zone_type": "SHELF",
+          "is_revenue_zone": true,
+          "inner_polygon": [[200, 400], [3000, 400], [3000, 3600], [200, 3600]],
+          "outer_polygon": [[0, 200], [3300, 200], [3300, 3820], [0, 3820]],
+          "description": "Left-side shelf area near entrance (Salm, TFS brands)"
+        },
+        {
+          "zone_id": "PURPLLE_MUM_1076_Z02",
+          "zone_name": "Center Display",
+          "zone_type": "DISPLAY",
+          "is_revenue_zone": true,
+          "inner_polygon": [[3500, 800], [7500, 800], [7500, 3200], [3500, 3200]],
+          "outer_polygon": [[3200, 500], [7800, 500], [7800, 3520], [3200, 3520]],
+          "description": "Center floor area — Makeup Unit island + FOH display"
+        },
+        {
+          "zone_id": "PURPLLE_MUM_1076_Z03",
+          "zone_name": "Lipstick Aisle",
+          "zone_type": "SHELF",
+          "is_revenue_zone": true,
+          "inner_polygon": [[7800, 400], [11000, 400], [11000, 3600], [7800, 3600]],
+          "outer_polygon": [[7500, 200], [11300, 200], [11300, 3820], [7500, 3820]],
+          "description": "Mid-right shelf area (Mars, NY Bae, L'Oreal brands)"
+        },
+        {
+          "zone_id": "PURPLLE_MUM_1076_Z_BILLING_01",
+          "zone_name": "Billing Counter Queue",
+          "zone_type": "BILLING",
+          "is_revenue_zone": true,
+          "inner_polygon": [[11200, 800], [13800, 800], [13800, 3200], [11200, 3200]],
+          "outer_polygon": [[10900, 500], [14000, 500], [14000, 3520], [10900, 3520]],
+          "description": "Cash Counter and billing queue area on right side"
+        }
+      ],
+      "entry_thresholds": {
+        "CAM3": {
+          "camera_id": "CAM3",
+          "threshold_line": [[0, 200], [0, 3820]],
+          "inbound_side": "right",
+          "outbound_side": "left",
+          "description": "Entry/exit threshold at left glass facade (x=0 line)"
+        }
+      }
+    },
+    "ST1008": {
+      "name": "Purplle Store 2",
+      "floor_width_mm": 10000,
+      "floor_depth_mm": 8000,
+      "coordinate_system": "physical_mm",
+      "coordinate_note": "Origin (0,0) is bottom-left (south-facing entrance). X increases rightward, Y increases upward. Derived from layout PNG architectural measurements.",
+      "zones": [
+        {
+          "zone_id": "PURPLLE_ST1008_Z01",
+          "zone_name": "Left Wall Units",
+          "zone_type": "SHELF",
+          "is_revenue_zone": true,
+          "inner_polygon": [[200, 2000], [2500, 2000], [2500, 7500], [200, 7500]],
+          "outer_polygon": [[0, 1700], [2800, 1700], [2800, 7800], [0, 7800]],
+          "description": "Left wall unit shelves (Wall Unit 1-5)"
+        },
+        {
+          "zone_id": "PURPLLE_ST1008_Z02",
+          "zone_name": "Center Gondola",
+          "zone_type": "DISPLAY",
+          "is_revenue_zone": true,
+          "inner_polygon": [[3000, 2000], [7000, 2000], [7000, 6000], [3000, 6000]],
+          "outer_polygon": [[2700, 1700], [7300, 1700], [7300, 6300], [2700, 6300]],
+          "description": "Center gondola racks and FOH floor space"
+        },
+        {
+          "zone_id": "PURPLLE_ST1008_Z03",
+          "zone_name": "Right Wall Units",
+          "zone_type": "SHELF",
+          "is_revenue_zone": true,
+          "inner_polygon": [[7500, 2000], [9800, 2000], [9800, 7500], [7500, 7500]],
+          "outer_polygon": [[7200, 1700], [10000, 1700], [10000, 7800], [7200, 7800]],
+          "description": "Right wall unit shelves (Wall Unit 5-19)"
+        },
+        {
+          "zone_id": "PURPLLE_ST1008_Z04",
+          "zone_name": "Makeup Stations",
+          "zone_type": "DISPLAY",
+          "is_revenue_zone": true,
+          "inner_polygon": [[5500, 5000], [9500, 5000], [9500, 7500], [5500, 7500]],
+          "outer_polygon": [[5200, 4700], [9800, 4700], [9800, 7800], [5200, 7800]],
+          "description": "Makeup unit stations (4 stations) centre-right"
+        },
+        {
+          "zone_id": "PURPLLE_ST1008_Z_BILLING_01",
+          "zone_name": "Billing Counter Queue",
+          "zone_type": "BILLING",
+          "is_revenue_zone": true,
+          "inner_polygon": [[3000, 6500], [7000, 6500], [7000, 7800], [3000, 7800]],
+          "outer_polygon": [[2700, 6200], [7300, 6200], [7300, 8000], [2700, 8000]],
+          "description": "Cash Counter billing queue area (centre-top)"
+        }
+      ],
+      "entry_thresholds": {
+        "CAM_ENTRY_1": {
+          "camera_id": "CAM_ENTRY_1",
+          "threshold_line": [[0, 200], [4500, 200]],
+          "inbound_side": "up",
+          "outbound_side": "down",
+          "description": "Left section of south-facing entrance (y=200 line)"
+        },
+        "CAM_ENTRY_2": {
+          "camera_id": "CAM_ENTRY_2",
+          "threshold_line": [[4500, 200], [10000, 200]],
+          "inbound_side": "up",
+          "outbound_side": "down",
+          "description": "Right section of south-facing entrance (y=200 line)"
+        }
+      }
+    }
+  }
+}

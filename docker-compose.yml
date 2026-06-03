@@ -1,0 +1,107 @@
+services:
+
+  # ============================================================
+  # database — TimescaleDB (PostgreSQL 16)
+  # ============================================================
+  database:
+    image: timescale/timescaledb:latest-pg16
+    container_name: retail_db
+    environment:
+      POSTGRES_USER:     ${POSTGRES_USER:-purplle}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-purplle_secret}
+      POSTGRES_DB:       ${POSTGRES_DB:-retail_intelligence}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./db/migrations:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-purplle} -d ${POSTGRES_DB:-retail_intelligence}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # ============================================================
+  # message-broker — Redis 7 (internal only)
+  # ============================================================
+  message-broker:
+    image: redis:7-alpine
+    container_name: retail_redis
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # ============================================================
+  # api-server — FastAPI + Uvicorn
+  # ============================================================
+  api-server:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    container_name: retail_api
+    ports:
+      - "8000:8000"
+    env_file: .env
+    environment:
+      DATABASE_URL:    postgresql+asyncpg://${POSTGRES_USER:-purplle}:${POSTGRES_PASSWORD:-purplle_secret}@database:5432/${POSTGRES_DB:-retail_intelligence}
+      API_SERVER_URL:  http://api-server:8000
+      POS_CSV_PATH:    /data/POS_transactions.csv
+    volumes:
+      - ./POS_transactions.csv:/data/POS_transactions.csv:ro
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 8
+      start_period: 60s
+
+  # ============================================================
+  # vision-pipeline — Computer vision + event emission
+  # ============================================================
+  vision-pipeline:
+    build:
+      context: .
+      dockerfile: pipeline/Dockerfile
+    container_name: retail_pipeline
+    volumes:
+      - ./models:/app/models:ro
+      - ./Stores:/app/Stores:ro
+      - ./store_layout:/app/store_layout:ro
+    env_file: .env
+    environment:
+      API_SERVER_URL:          http://api-server:8000
+      USE_ONNX_CPU:            ${USE_ONNX_CPU:-true}
+      STORE1_CLIP_START_UTC:   ${STORE1_CLIP_START_UTC:-2026-03-08T12:00:00Z}
+      STORE2_CLIP_START_UTC:   ${STORE2_CLIP_START_UTC:-2026-04-10T12:00:00Z}
+    depends_on:
+      api-server:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+    # Optional: GPU support (uncomment if NVIDIA Container Toolkit is installed)
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+volumes:
+  postgres-data:
+
+networks:
+  app-network:
+    name: app-network
+    driver: bridge

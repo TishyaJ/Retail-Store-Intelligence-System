@@ -1,0 +1,73 @@
+# === User-Requested Exclusions ===
+.env
+guides/
+changelog.md
+story.md
+.agents/
+Stores/
+
+# === Model Weights (large binary files — place in models/ after Colab training) ===
+models/*.onnx
+models/*.pth
+models/*.pt
+models/*.bin
+!models/README.md
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# === Virtual Environments ===
+.venv/
+venv/
+env/
+ENV/
+
+# === IDE / Editor ===
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# === OS ===
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# === Docker ===
+.docker/
+
+# === Logs & Buffers ===
+*.log
+buffer.jsonl
+logs/
+
+# === Coverage / Test Artifacts ===
+coverage.xml
+.coverage.*
+report.xml
+
+# === Jupyter ===
+.ipynb_checkpoints/
+
+# === Environment Variables ===
+*.env
+.env.*
+!.env.example
+
+# === Ignored as per request ===
+Stores/
+guides/
+.agents/
+changelog.md
+story.md
