@@ -23,7 +23,8 @@ docker compose up --build -d
 curl http://localhost:8000/health
 
 # 5. The vision pipeline starts automatically once API is healthy
-#    To check events are flowing:
+#    All detected events are appended natively to: output/event_log.jsonl
+#    To check events are flowing into the API:
 curl http://localhost:8000/stores/ST1076/metrics
 ```
 

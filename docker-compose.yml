@@ -77,6 +77,7 @@ services:
       - ./models:/app/models:ro
       - ./Stores:/app/Stores:ro
       - ./store_layout:/app/store_layout:ro
+      - ./output:/app/output
     env_file: .env
     environment:
       API_SERVER_URL:          http://api-server:8000

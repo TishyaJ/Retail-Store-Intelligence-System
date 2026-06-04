@@ -46,6 +46,16 @@ class EventEmitter:
         batch = list(self._buffer)
         self._buffer.clear()
         self._last_flush = time.monotonic()
+        
+        # Always write to the required event log file
+        try:
+            os.makedirs("/app/output", exist_ok=True)
+            with open("/app/output/event_log.jsonl", "a") as f:
+                for evt in batch:
+                    f.write(json.dumps(evt) + "\n")
+        except Exception as e:
+            logger.error("local_log_write_failed", error=str(e))
+            
         self._post_with_retry(batch)
 
     def _post_with_retry(self, batch: list[dict]) -> None:
