@@ -104,16 +104,21 @@ class Detector:
     def _detect_onnx(
         self, frame: np.ndarray
     ) -> tuple[list[Detection], list[Detection]]:
-        # Preprocess: BGR → RGB, resize, normalise
+        # Preprocess: BGR → RGB, resize to 640×640, normalise to [0,1]
         input_name = self.onnx_session.get_inputs()[0].name
         img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         img = cv2.resize(img, (640, 640))
         img = img.astype(np.float32) / 255.0
-        img = np.transpose(img, (2, 0, 1))[np.newaxis, :]
+        img = np.transpose(img, (2, 0, 1))[np.newaxis, :]  # (1, 3, 640, 640)
 
         outputs = self.onnx_session.run(None, {input_name: img})
-        # outputs[0] shape: (1, num_preds, 6) — [x1,y1,x2,y2,conf,cls]
-        preds = outputs[0][0]
+
+        # YOLOv11m 1-class ONNX output shape: (1, 5, 8400)
+        #   dim-1 rows: [cx, cy, w, h, person_score]
+        #   dim-2 cols: 8400 anchor candidates
+        # Transpose to (8400, 5) so each row = one anchor prediction.
+        raw = outputs[0][0]  # (5, 8400)
+        preds = raw.T        # (8400, 5)
 
         h, w = frame.shape[:2]
         sx, sy = w / 640, h / 640
@@ -141,19 +146,28 @@ class Detector:
     def _split_detections(
         self, preds: np.ndarray, sx: float, sy: float
     ) -> tuple[list[Detection], list[Detection]]:
+        """
+        Parse anchor predictions from YOLOv11m 1-class ONNX output.
+
+        Each row of preds is: [cx, cy, w, h, person_score]
+        Coordinates are in 640×640 pixel space and must be scaled
+        back to the original frame dimensions via sx, sy.
+        """
         high, low = [], []
         for pred in preds:
+            # 1-class model: column layout is [cx, cy, w, h, person_score]
             conf = float(pred[4])
-            cls  = int(pred[5])
-            if cls != PERSON_CLASS_ID or conf < LOW_CONF_THRESHOLD:
+            if conf < LOW_CONF_THRESHOLD:
                 continue
-            d = Detection(
-                x1=float(pred[0]) * sx,
-                y1=float(pred[1]) * sy,
-                x2=float(pred[2]) * sx,
-                y2=float(pred[3]) * sy,
-                confidence=conf,
-            )
+
+            # Convert centre-format → corner-format, scale to frame size
+            cx, cy, pw, ph = float(pred[0]), float(pred[1]), float(pred[2]), float(pred[3])
+            x1 = (cx - pw / 2) * sx
+            y1 = (cy - ph / 2) * sy
+            x2 = (cx + pw / 2) * sx
+            y2 = (cy + ph / 2) * sy
+
+            d = Detection(x1=x1, y1=y1, x2=x2, y2=y2, confidence=conf)
             if conf > HIGH_CONF_THRESHOLD:
                 high.append(d)
             else:
