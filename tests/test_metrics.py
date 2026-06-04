@@ -21,6 +21,9 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Any
 
+# PROMPT: "Generate unit tests and a property-based test for the metrics endpoint. Ensure we test unique visitors and queue depth calculations, and add a Hypothesis test to verify the metrics response schema round-trips."
+# CHANGES MADE: Added Hypothesis strategies and schema validation checks.
+
 import pytest
 
 

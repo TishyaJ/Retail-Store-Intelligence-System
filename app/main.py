@@ -92,9 +92,11 @@ from .metrics   import router as metrics_router  # noqa: E402
 from .funnel    import router as funnel_router   # noqa: E402
 from .anomalies import router as anomaly_router  # noqa: E402
 from .health    import router as health_router   # noqa: E402
+from .heatmap   import router as heatmap_router  # noqa: E402
 
 app.include_router(ingest_router)
 app.include_router(metrics_router)
 app.include_router(funnel_router)
 app.include_router(anomaly_router)
 app.include_router(health_router)
+app.include_router(heatmap_router)

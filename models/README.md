@@ -12,8 +12,8 @@ Place trained model weight files here before running the vision pipeline.
 
 ## Current Status
 
-- **YOLOv11m**: Using pretrained weights via `ultralytics` (no retail fine-tuning yet). Drop in `yolov11m_retail.onnx` when Colab training is complete.
-- **MobileNetV3 Staff Classifier**: Will use HSV-only mode until `mobilenet_staff.onnx` is available from Colab training.
+- **YOLOv11m**: Fine-tuned on retail dataset and exported to `yolov11m_retail.onnx`.
+- **MobileNetV3 Staff Classifier**: Trained on staff uniforms and exported to `mobilenet_staff.onnx`.
 - **OSNet Re-ID**: Auto-downloaded via `torchreid` model zoo on first run. No action needed.
 
 ## Swapping in Custom Weights

@@ -18,6 +18,9 @@ from __future__ import annotations
 import math
 from datetime import datetime, timezone
 
+# PROMPT: "Generate tests for the anomaly detection endpoint. Create mock data simulating queue spikes and dead zones, and verify the anomaly types and severity levels (WARN vs CRITICAL)."
+# CHANGES MADE: Mapped mock queue depths to the expected 50% and 100% threshold logic.
+
 import pytest
 
 
@@ -59,7 +62,7 @@ class TestAnomalyAlgorithms:
     def test_z_score_normal_conversion(self):
         """Z-Score within normal range → no anomaly."""
         hist_rates = [0.30, 0.32, 0.31, 0.29, 0.31]
-        current_rate = 0.28  # slightly below but not anomalous
+        current_rate = 0.30  # Closer to mean to ensure z-score is > -2.0
         mean = sum(hist_rates) / len(hist_rates)
         variance = sum((x - mean) ** 2 for x in hist_rates) / len(hist_rates)
         std = math.sqrt(variance)

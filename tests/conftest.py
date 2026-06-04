@@ -28,8 +28,20 @@ from __future__ import annotations
 
 import asyncio
 import os
+import sys
 from datetime import datetime, date
 from typing import AsyncGenerator
+from unittest.mock import MagicMock
+
+# Mock heavy ML dependencies so the API container can collect pipeline tests
+class MockModule(MagicMock):
+    pass
+
+sys.modules['torch'] = MockModule()
+sys.modules['torchvision'] = MockModule()
+sys.modules['torchreid'] = MockModule()
+sys.modules['onnxruntime'] = MockModule()
+sys.modules['ultralytics'] = MockModule()
 
 import asyncpg
 import pytest
@@ -168,14 +180,15 @@ async def db_pool() -> AsyncGenerator[asyncpg.Pool, None]:
 
 @pytest.fixture(scope="module")
 def test_client(db_pool):
-    """FastAPI TestClient with DB pool dependency overridden."""
+    """FastAPI TestClient with its own DB pool inside the TestClient loop."""
     from app.main import app
-    from app.database import get_pool
 
-    app.dependency_overrides[get_pool] = lambda: db_pool
+    # Ensure FastAPI uses the test DB
+    default_db = os.environ.get("DATABASE_URL", "postgresql://purplle:purplle_secret@localhost:5432/retail_intelligence")
+    os.environ["DATABASE_URL"] = os.environ.get("TEST_DATABASE_URL", default_db).replace("postgresql+asyncpg://", "postgresql://")
+
     with TestClient(app) as client:
         yield client
-    app.dependency_overrides.clear()
 
 
 # ---------------------------------------------------------------------------
